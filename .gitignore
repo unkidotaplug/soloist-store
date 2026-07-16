@@ -1,0 +1,17 @@
+.vercel
+.DS_Store
+._*
+.idea/
+.claude/
+.env
+.env.local
+.env.*.local
+automation/.env
+automation/.venv/
+automation/data/*
+!automation/data/.gitkeep
+*.sqlite3
+*.log
+__pycache__/
+*.py[cod]
+.pytest_cache/

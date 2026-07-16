@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLOIST — брендовая одежда 1:1 с доставкой по РФ, РБ и КЗ</title>
+<meta name="description" content="SOLOIST — магазин брендовой и дизайнерской одежды, обуви и аксессуаров. Качество 1:1 к оригиналу, найдём любую вещь по фото. Доставка по России, Беларуси и Казахстану. 500+ довольных клиентов.">
+<meta name="keywords" content="брендовая одежда, дизайнерская одежда, реплики 1:1, Rick Owens, Balenciaga, Enfants Riches Déprimés, купить одежду, доставка РФ РБ Казахстан">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="canonical" href="https://soloist.store/">
+<!-- favicon -->
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SOLOIST">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://soloist.store/">
+<meta property="og:title" content="SOLOIST — брендовая одежда 1:1 с доставкой">
+<meta property="og:description" content="Брендовая и дизайнерская одежда, обувь и аксессуары. Качество 1:1, найдём любую вещь по фото. Доставка по РФ, РБ и КЗ.">
+<meta property="og:image" content="https://soloist.store/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SOLOIST — брендовая одежда 1:1">
+<meta name="twitter:description" content="Брендовая и дизайнерская одежда, обувь и аксессуары. Качество 1:1, доставка по РФ, РБ и КЗ.">
+<meta name="twitter:image" content="https://soloist.store/assets/og.jpg">
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ClothingStore",
+  "name": "SOLOIST",
+  "description": "Магазин брендовой и дизайнерской одежды, обуви и аксессуаров. Качество 1:1 к оригиналу. Доставка по России, Беларуси и Казахстану.",
+  "url": "https://soloist.store/",
+  "image": "https://soloist.store/assets/og.jpg",
+  "priceRange": "₽₽",
+  "areaServed": ["RU", "BY", "KZ"],
+  "currenciesAccepted": "RUB",
+  "sameAs": [
+    "https://t.me/soloist_store",
+    "https://t.me/OTZIVI_SOLOIST",
+    "https://t.me/soloist_chat"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "url": "https://t.me/USERSOLOIST",
+    "availableLanguage": "Russian"
+  }
+}
+</script>
+<style>
+ :root{
+  --black:#0a0a0a;
+  --white:#ffffff;
+  --paper:#ececeb;
+  --grey:#86878a;
+  --line:#dcdcda;
+  --ease:cubic-bezier(.16,1,.3,1);
+ }
+ *{margin:0;padding:0;box-sizing:border-box}
+ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+ body{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  background:var(--white);color:var(--black);
+  font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+ }
+ body.lock{overflow:hidden}
+ img{display:block;max-width:100%}
+ a{color:inherit;text-decoration:none}
+ ::selection{background:var(--black);color:var(--white)}
+ .mono{font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+
+ /* ---------- cart button ---------- */
+ .cart-btn{position:relative;background:none;border:none;cursor:pointer;padding:6px;color:var(--black);display:flex;align-items:center}
+ .cart-badge{position:absolute;top:-2px;right:-4px;background:var(--black);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;letter-spacing:0}
+
+ /* ---------- cart toast ---------- */
+ .cart-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--black);color:#fff;font-size:12px;letter-spacing:.05em;padding:13px 22px;z-index:9999;opacity:0;transition:.35s var(--ease);pointer-events:none;white-space:nowrap}
+ .cart-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+ /* ---------- cart drawer ---------- */
+ .cart-drawer{position:fixed;inset:0;z-index:500;pointer-events:none}
+ .cart-drawer.open{pointer-events:all}
+ .cart-drawer__overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:.4s var(--ease);z-index:1}
+ .cart-drawer.open .cart-drawer__overlay{opacity:1}
+ .cart-drawer__inner{position:absolute;right:0;top:0;bottom:0;width:420px;max-width:100vw;background:#fff;display:flex;flex-direction:column;transform:translateX(100%);transition:.45s var(--ease);z-index:2}
+ .cart-drawer.open .cart-drawer__inner{transform:none}
+ .cart-drawer__head{display:flex;justify-content:space-between;align-items:center;padding:24px;border-bottom:1px solid var(--line)}
+ .cart-drawer__title{font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+ .cart-drawer__close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--grey);line-height:1}
+ .cart-drawer__body{flex:1;overflow-y:auto;padding:16px 24px}
+ .cart-empty{display:flex;align-items:center;justify-content:center;height:200px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey)}
+ .cart-item{display:grid;grid-template-columns:72px 1fr 24px;gap:14px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+ .cart-item img{width:72px;height:90px;object-fit:cover;background:var(--paper)}
+ .cart-item__name{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+ .cart-item__price{font-size:12px;color:var(--grey);margin-bottom:10px}
+ .cart-item__qty{display:flex;align-items:center;gap:0;border:1px solid var(--line);width:fit-content}
+ .cart-item__qty button{background:none;border:none;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--black);display:flex;align-items:center;justify-content:center}
+ .cart-item__qty span{width:32px;text-align:center;font-size:13px;font-weight:600}
+ .cart-item__del{background:none;border:none;cursor:pointer;font-size:14px;color:var(--grey);margin-top:2px}
+ .cart-drawer__foot{padding:20px 24px;border-top:1px solid var(--line)}
+ .cart-drawer__total{display:flex;justify-content:space-between;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+
+ /* ---------- fullpage (checkout / success) ---------- */
+ .fullpage{position:fixed;inset:0;z-index:600;background:#fff;overflow-y:auto;transform:translateY(100%);transition:.5s var(--ease);display:flex;flex-direction:column}
+ .fullpage.open{transform:none}
+ .fullpage__inner{max-width:960px;margin:0 auto;width:100%;padding:0 24px 60px;flex:1}
+ .fullpage__head{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;position:sticky;top:0;background:#fff;z-index:2}
+ .fullpage__head button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--grey)}
+
+ /* checkout */
+ .checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:40px}
+ .checkout-section-title{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:28px}
+ .field{margin-bottom:20px}
+ .field label{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin-bottom:7px}
+ .field input,.field textarea{width:100%;border:1px solid var(--line);background:#fff;padding:13px 14px;font-family:inherit;font-size:14px;color:var(--black);outline:none;resize:vertical;transition:border-color .3s}
+ .field input:focus,.field textarea:focus{border-color:var(--black)}
+ .checkout-submit:disabled{opacity:.6;cursor:not-allowed}
+ .order-summary{display:flex;flex-direction:column;gap:0}
+ .order-row{display:grid;grid-template-columns:60px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+ .order-row img{width:60px;height:75px;object-fit:cover;background:var(--paper)}
+ .or-name{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+ .or-qty{font-size:11px;color:var(--grey);margin-top:4px}
+ .or-sum{font-size:13px;font-weight:600;white-space:nowrap}
+ .order-total-row{display:flex;justify-content:space-between;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:20px 0}
+
+ /* success */
+ .success-content{display:flex;flex-direction:column;align-items:center;text-align:center;padding:80px 24px}
+ .success-icon{width:72px;height:72px;border:2px solid var(--black);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:28px}
+ .success-content h2{font-size:clamp(28px,5vw,48px);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;margin-bottom:16px}
+ .success-content p{font-size:14px;line-height:1.7;color:var(--grey);max-width:380px;margin-bottom:36px}
+
+ @media(max-width:680px){
+  .checkout-grid{grid-template-columns:1fr;gap:32px}
+  .cart-drawer__inner{width:100vw}
+ }
+
+ /* ---------- ticker ---------- */
+ .ticker{background:var(--black);color:var(--white);font-size:11px;letter-spacing:.18em;text-transform:uppercase;height:32px;display:flex;align-items:center;overflow:hidden;white-space:nowrap}
+ .ticker__track{display:inline-flex;animation:scroll 34s linear infinite}
+ .ticker__track span{padding:0 26px;position:relative}
+ .ticker__track span::after{content:"✕";position:absolute;right:-3px;opacity:.45;font-size:8px}
+ @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+ /* ---------- header ---------- */
+ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 24px;height:60px;transition:transform .4s var(--ease)}
+ header.hide{transform:translateY(-100%)}
+ .nav{display:flex;gap:24px;font-size:11px;letter-spacing:.14em}
+ .nav a,.nav button{position:relative;padding:4px 0;text-transform:uppercase;background:none;border:none;font-family:inherit;font-size:11px;letter-spacing:.14em;cursor:pointer}
+ .nav a::after,.nav button.lk::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--black);transition:width .4s var(--ease)}
+ .nav a:hover::after,.nav button.lk:hover::after{width:100%}
+ .brand{display:flex;align-items:center;gap:11px;justify-content:center}
+ .brand img{width:30px;height:30px;border-radius:50%;object-fit:cover;filter:grayscale(1) contrast(1.1)}
+ .brand b{font-size:21px;font-weight:700;letter-spacing:.3em;padding-left:.3em}
+ .nav--right{justify-content:flex-end}
+ .nav--right .tg{display:inline-flex;align-items:center;gap:7px}
+ .header__spacer{display:none}
+ .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px}
+ .burger span{width:22px;height:1.5px;background:var(--black);display:block;transition:.3s}
+
+ /* ---------- hero (editorial photo) ---------- */
+ .hero{position:relative;min-height:calc(100vh - 92px);background:#9d9e9c;color:#0a0a0a;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:44px}
+ .hero__img{position:absolute;inset:0;z-index:0}
+ .hero__img img{width:100%;height:100%;object-fit:cover;object-position:center bottom;transform:scale(1.05);animation:heroZoom 10s var(--ease) forwards}
+ @keyframes heroZoom{to{transform:scale(1)}}
+ .hero__scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(238,238,235,.24) 0%,rgba(238,238,235,0) 18%),linear-gradient(0deg,rgba(236,236,233,.4) 0%,rgba(236,236,233,.08) 15%,transparent 26%)}
+ .hero__head,.hero__meta{position:relative;z-index:2}
+ .hero__top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+ .hero__top .mono{opacity:.65}
+ .hero__title{font-size:clamp(58px,13vw,200px);font-weight:700;line-height:.84;letter-spacing:-.025em;text-transform:uppercase;overflow:hidden;margin-left:-.015em}
+ .hero__title b{display:block;transform:translateY(110%);animation:rise 1.05s var(--ease) forwards}
+ @keyframes rise{to{transform:translateY(0)}}
+ .hero__meta{max-width:380px;padding-bottom:6px}
+ .hero__meta p{font-size:13.5px;letter-spacing:.03em;line-height:1.7;opacity:0;color:#16161a;margin-bottom:22px;animation:fade 1s .5s var(--ease) forwards}
+ @keyframes fade{to{opacity:1}}
+ .hero__actions{display:flex;gap:13px;flex-wrap:wrap;opacity:0;animation:fade 1s .68s var(--ease) forwards}
+
+ .btn{display:inline-flex;align-items:center;gap:12px;background:var(--black);color:var(--white);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;padding:15px 26px;border:1px solid var(--black);cursor:pointer;font-family:inherit;transition:.45s var(--ease)}
+ .btn:hover{background:transparent;color:var(--black)}
+ .btn--ghost{background:transparent;color:var(--black)}
+ .btn--ghost:hover{background:var(--black);color:var(--white)}
+ .btn--light{background:var(--white);color:var(--black);border-color:var(--white)}
+ .btn--light:hover{background:transparent;color:var(--white)}
+ .btn .arr{transition:transform .45s var(--ease)}
+ .btn:hover .arr{transform:translateX(5px)}
+
+ /* ---------- brands strip ---------- */
+ .brands{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:16px 0;background:var(--white)}
+ .brands__track{display:inline-flex;animation:scroll 40s linear infinite}
+ .brands__track b{font-size:clamp(15px,1.6vw,20px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:0 30px;color:#1a1a1a}
+ .brands__track b span{opacity:.3;margin-left:30px}
+
+ /* ---------- catalog ---------- */
+ .section-head{display:flex;justify-content:space-between;align-items:baseline;padding:54px 24px 20px;flex-wrap:wrap;gap:16px}
+ .section-head h2{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+ .section-head .count{font-size:11px;letter-spacing:.14em;color:var(--grey);text-transform:uppercase}
+ .filters{display:flex;gap:8px;flex-wrap:wrap;padding:0 24px 8px}
+ .filters button{font-family:inherit;font-size:11px;letter-spacing:.13em;text-transform:uppercase;background:none;border:1px solid var(--line);padding:9px 16px;cursor:pointer;color:var(--grey);transition:.3s var(--ease)}
+ .filters button:hover{border-color:var(--black);color:var(--black)}
+ .filters button.active{background:var(--black);color:var(--white);border-color:var(--black)}
+
+ .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+ .card{background:var(--white);position:relative;opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+ .card.in{opacity:1;transform:none}
+ .card__media{position:relative;aspect-ratio:3/4;background:#fff;overflow:hidden}
+ .card__media img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+ .card:hover .card__media img{transform:scale(1.05)}
+ .tag{position:absolute;top:12px;left:12px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:var(--black);color:var(--white);padding:5px 9px;z-index:2}
+ .tag--new{background:#fff;color:#000;border:1px solid #000}
+ .card__buy{position:absolute;left:0;right:0;bottom:0;background:var(--black);color:var(--white);text-align:center;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;padding:15px;transform:translateY(100%);transition:transform .45s var(--ease)}
+ .card:hover .card__buy{transform:translateY(0)}
+ .card__info{padding:16px 16px 22px}
+ .card__name{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:4px;line-height:1.3}
+ .card__brand{font-size:10px;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-bottom:10px}
+ .card__price{display:flex;align-items:baseline;gap:10px;font-size:13px}
+ .card__price .now{font-weight:600}
+ .card__price .was{color:var(--grey);text-decoration:line-through;font-size:11px}
+ .card__price .off{margin-left:auto;font-size:10px;letter-spacing:.1em;border:1px solid #000;padding:2px 6px}
+
+ /* ---------- split editorial ---------- */
+ .split{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+ .split__media{background:#fff;overflow:hidden;aspect-ratio:1/1}
+ .split__media img{width:100%;height:100%;object-fit:cover}
+ .split__text{display:flex;flex-direction:column;justify-content:center;padding:clamp(36px,7vw,88px);gap:22px}
+ .split__text .mono{color:var(--grey)}
+ .split__text h3{font-size:clamp(28px,4vw,46px);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em}
+ .split__text p{font-size:13px;letter-spacing:.04em;color:#333;max-width:420px;line-height:1.7}
+ .split--rev{direction:rtl}.split--rev>*{direction:ltr}
+
+ /* ---------- feature band (was trust) ---------- */
+ .band{border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr)}
+ .band__c{padding:40px 26px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+ .band__c:last-child{border-right:none}
+ .band__c .k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
+ .band__c .v{font-size:15px;letter-spacing:.02em;line-height:1.45;font-weight:500}
+ .band__c .v b{font-weight:700}
+
+ /* ---------- CTA ---------- */
+ .cta{background:var(--black);color:var(--white);text-align:center;padding:clamp(72px,11vw,140px) 24px;display:flex;flex-direction:column;align-items:center}
+ .cta__eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:60px}
+ .cta h2{font-size:clamp(40px,6.5vw,104px);font-weight:700;text-transform:uppercase;line-height:1;letter-spacing:-.025em;margin-bottom:24px;padding-top:.15em}
+ .cta p{font-size:14px;letter-spacing:.01em;line-height:1.65;color:rgba(255,255,255,.72);max-width:480px;margin-bottom:40px}
+ .cta__btns{display:flex;gap:13px;justify-content:center;flex-wrap:wrap}
+ .btn--lineW{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+ .btn--lineW:hover{background:#fff;color:#0a0a0a;border-color:#fff}
+
+ /* ---------- footer ---------- */
+ footer{background:var(--black);color:var(--white);padding:60px 24px 34px;border-top:1px solid #222}
+ .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;max-width:1200px;margin:0 auto;padding-bottom:50px}
+ .foot-logo{font-size:52px;font-weight:700;letter-spacing:.16em;line-height:.9}
+ .foot-logo span{display:block;font-size:11px;letter-spacing:.14em;opacity:.5;margin-top:16px;font-weight:400}
+ .foot-col h4{font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.5;margin-bottom:18px}
+ .foot-col a,.foot-col button{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:7px 0;opacity:.85;transition:opacity .3s,padding-left .3s var(--ease);background:none;border:none;color:#fff;font-family:inherit;cursor:pointer;text-align:left}
+ .foot-col a:hover,.foot-col button:hover{opacity:1;padding-left:8px}
+ .foot-bottom{display:flex;justify-content:space-between;border-top:1px solid #222;padding-top:24px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.5;flex-wrap:wrap;gap:10px;max-width:1200px;margin:0 auto}
+
+ /* ---------- conditions modal ---------- */
+ .modal{position:fixed;inset:0;z-index:300;display:none}
+ .modal.open{display:block}
+ .modal__bg{position:absolute;inset:0;background:rgba(10,10,10,.55);backdrop-filter:blur(3px);opacity:0;transition:opacity .4s}
+ .modal.open .modal__bg{opacity:1}
+ .modal__panel{position:absolute;top:0;right:0;height:100%;width:min(560px,100%);background:var(--white);transform:translateX(100%);transition:transform .5s var(--ease);display:flex;flex-direction:column}
+ .modal.open .modal__panel{transform:none}
+ .modal__head{display:flex;justify-content:space-between;align-items:center;padding:22px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--white);z-index:2}
+ .modal__head h3{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+ .modal__head button{background:none;border:none;font-size:22px;cursor:pointer;line-height:1}
+ .modal__body{overflow-y:auto;padding:34px 28px 60px}
+ .cond__hi{background:var(--paper);border:1px solid var(--line);padding:20px 22px;margin-bottom:30px}
+ .cond__hi p{font-size:13px;line-height:1.6;color:#222}
+ .cond__hi p+p{margin-top:10px}
+ .cond-sec{margin-bottom:30px;padding-bottom:30px;border-bottom:1px solid var(--line)}
+ .cond-sec:last-child{border-bottom:none;margin-bottom:0}
+ .cond-sec .num{font-size:11px;letter-spacing:.2em;color:var(--grey);text-transform:uppercase;margin-bottom:8px}
+ .cond-sec h4{font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.1;margin-bottom:14px}
+ .cond-sec p{font-size:13px;line-height:1.7;color:#2b2b2b;margin-bottom:12px}
+ .cond-sec p:last-child{margin-bottom:0}
+ .cond-item{display:flex;gap:14px;margin-bottom:16px}
+ .cond-item .n{flex:none;width:30px;height:30px;border:1px solid var(--black);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+ .cond-item .t{font-size:13px;line-height:1.6}
+ .cond-item .t b{text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:3px;font-size:11px}
+ .cond-note{background:#0a0a0a;color:#fff;padding:16px 18px;font-size:12px;line-height:1.6;letter-spacing:.02em;margin:16px 0}
+ .cond-foot{text-align:center;font-size:13px;letter-spacing:.06em;margin-top:10px}
+ .modal__cta{padding:18px 28px;border-top:1px solid var(--line);display:flex;gap:10px}
+ .modal__cta a{flex:1;text-align:center}
+
+ /* ---------- reveal ---------- */
+ .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+ .reveal.in{opacity:1;transform:none}
+ .mobile-nav{display:none}
+
+ /* ---------- responsive ---------- */
+ @media(max-width:1024px){
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .hero{padding:32px 24px 28px}
+  .band{grid-template-columns:repeat(2,1fr)}
+  .band__c:nth-child(2){border-right:none}
+  .band__c:nth-child(1),.band__c:nth-child(2){border-bottom:1px solid var(--line)}
+ }
+ @media(max-width:680px){
+  /* header: logo центр, бургер справа */
+  header{padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between}
+  .nav{display:none}
+  .nav--right{display:flex;justify-content:flex-end;flex:0 0 auto}
+  .header__spacer{display:block;width:34px;flex-shrink:0}
+  .nav--right a,.nav--right .tg,.nav--right>button.lk{display:none}
+  .burger{display:flex}
+  .brand{flex:1;justify-content:center}
+  .brand b{font-size:18px;letter-spacing:.28em}
+  /* hero: фото по центру, текст снизу с подложкой */
+  .hero{padding:20px 20px 28px}
+  .hero__img img{object-position:72% bottom}
+  .hero__title{font-size:14.5vw}
+  .hero__meta{max-width:none;background:linear-gradient(to top,rgba(220,220,218,.85) 0%,rgba(220,220,218,.6) 60%,transparent 100%);margin:-20px;padding:28px 20px 0;position:relative;z-index:3}
+  .hero__meta p{font-size:13px}
+  .hero__head{margin-bottom:auto}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .card__buy{transform:none!important;position:static!important;width:100%;border-radius:0;padding:13px}
+  .card__media{overflow:visible}
+  .card:hover .card__media img{transform:none}
+  .split{grid-template-columns:1fr}.split--rev{direction:ltr}
+  .foot-grid{grid-template-columns:1fr}.foot-logo{font-size:40px}
+  .modal__panel{width:100%}
+  .mobile-nav{display:flex;position:fixed;inset:0;background:var(--white);z-index:200;flex-direction:column;justify-content:center;gap:6px;padding:40px;transform:translateX(100%);transition:transform .5s var(--ease)}
+  .mobile-nav.open{transform:none}
+  .mobile-nav a,.mobile-nav button{font-size:26px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:12px 0;border-bottom:1px solid var(--line);background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;text-align:left;cursor:pointer}
+  .mobile-nav .close{position:absolute;top:18px;right:22px;font-size:24px;border:none;padding:0;width:auto}
+ }
+</style>
+</head>
+<body>
+
+<!-- cart toast -->
+<div id="cartToast" class="cart-toast"></div>
+
+<!-- cart drawer -->
+<div id="cartDrawer" class="cart-drawer">
+ <div class="cart-drawer__inner">
+  <div class="cart-drawer__head">
+   <span class="cart-drawer__title">Корзина</span>
+   <button onclick="closeCart()" class="cart-drawer__close">✕</button>
+  </div>
+  <div id="cartBody" class="cart-drawer__body"></div>
+  <div id="cartFoot" class="cart-drawer__foot" style="display:none">
+   <div class="cart-drawer__total"><span>Итого</span><span id="cartTotal"></span></div>
+   <button class="btn" style="width:100%" onclick="goCheckout()">Оформить заказ →</button>
+  </div>
+ </div>
+ <div class="cart-drawer__overlay" onclick="closeCart()"></div>
+</div>
+
+<!-- checkout page -->
+<div id="checkoutPage" class="fullpage">
+ <div class="fullpage__inner">
+  <div class="fullpage__head">
+   <span>Оформление заказа</span>
+   <button onclick="closeCheckout()">✕</button>
+  </div>
+  <div class="fullpage__body">
+   <div class="checkout-grid">
+    <div>
+     <h3 class="checkout-section-title">Ваши данные</h3>
+     <form id="checkoutForm" onsubmit="submitOrder(event)">
+      <div class="field">
+       <label>ФИО *</label>
+       <input name="fio" type="text" placeholder="Иванов Иван Иванович" required>
+      </div>
+      <div class="field">
+       <label>Адрес доставки (СДЭК / почта) *</label>
+       <input name="address" type="text" placeholder="г. Москва, СДЭК, ул. Ленина 1" required>
+      </div>
+      <div class="field">
+       <label>Ваш Telegram *</label>
+       <input name="tg" type="text" placeholder="@username" required>
+      </div>
+      <div class="field">
+       <label>Комментарий</label>
+       <textarea name="comment" placeholder="Размер, расцветка, пожелания..." rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn checkout-submit" style="width:100%;margin-top:8px">Оформить заказ →</button>
+     </form>
+    </div>
+    <div>
+     <h3 class="checkout-section-title">Ваш заказ</h3>
+     <div id="orderSummary" class="order-summary"></div>
+     <div class="order-total-row"><span>Итого</span><span id="orderTotal2"></span></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- success page -->
+<div id="successPage" class="fullpage">
+ <div class="fullpage__inner" style="max-width:520px">
+  <div class="success-content">
+   <div class="success-icon">✓</div>
+   <h2>Заказ оформлен!</h2>
+   <p>Мы получили вашу заявку и скоро свяжемся с вами в Telegram. Спасибо за заказ!</p>
+   <button class="btn" onclick="closeSuccess()">На главную →</button>
+  </div>
+ </div>
+</div>
+
+<!-- ticker -->
+<div class="ticker">
+<div class="ticker__track" id="ticker">
+<span>Качество 1:1</span><span>Доставка РФ · РБ · Казахстан</span><span>Консультация 24/7</span><span>500+ довольных клиентов</span><span>Гарантия возврата средств</span><span>Найдём любой айтем по фото</span>
+</div>
+</div>
+
+<!-- header -->
+<header id="header">
+<span class="header__spacer"></span>
+<nav class="nav">
+<a class="lk" href="#catalog">Каталог</a>
+<button class="lk" id="condBtn2">Условия заказа</button>
+<a class="lk" href="https://t.me/OTZIVI_SOLOIST" target="_blank" rel="noopener">Отзывы</a>
+</nav>
+<a href="#top" class="brand"><b>SOLOIST</b></a>
+<nav class="nav nav--right">
+<a class="lk" href="https://t.me/soloist_chat" target="_blank" rel="noopener">Чат</a>
+<a class="tg lk" href="https://t.me/USERSOLOIST" target="_blank" rel="noopener">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 3 2 11l5 2 2 6 3-4 5 4 5-16ZM9 13l9-6-7 7-.2 3L9 13Z"/></svg>
+   Менеджер
+</a>
+<button class="cart-btn" onclick="openCart()" aria-label="Корзина">
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+ <span class="cart-badge" style="display:none">0</span>
+</button>
+<button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+</nav>
+</header>
+
+<!-- mobile nav -->
+<div class="mobile-nav" id="mnav">
+<button class="close" id="mclose">✕</button>
+<a href="#catalog">Каталог</a>
+<button id="condBtnM">Условия заказа</button>
+<a href="https://t.me/OTZIVI_SOLOIST" target="_blank" rel="noopener">Отзывы</a>
+<a href="https://t.me/soloist_chat" target="_blank" rel="noopener">Чат</a>
+<a href="https://t.me/USERSOLOIST" target="_blank" rel="noopener">Написать менеджеру</a>
+</div>
+
+<!-- hero -->
+<section id="top" class="hero">
+<div class="hero__img"><img src="assets/hero.jpg" alt="SOLOIST"></div>
+<div class="hero__scrim"></div>
+<div class="hero__head">
+<div class="hero__top">
+<span class="mono">Одежда · обувь · аксессуары</span>
+<span class="mono">RU · BY · KZ</span>
+</div>
+<h1 class="hero__title"><b>SOLOIST</b></h1>
+</div>
+<div class="hero__meta">
+<p>Брендовые и дизайнерские вещи в качестве 1:1 к оригиналу. Найдём любой айтем по одному фото. Доставка по России, Беларуси и Казахстану.</p>
+<div class="hero__actions">
+<a href="#catalog" class="btn">Смотреть каталог <span class="arr">→</span></a>
+</div>
+</div>
+</section>
+
+<!-- brands -->
+<div class="brands">
+<div class="brands__track" id="brands">
+<b>Rick Owens<span>/</span></b><b>Undercover<span>/</span></b><b>Enfants Riches Déprimés<span>/</span></b><b>Balenciaga<span>/</span></b><b>Hysteric Glamour<span>/</span></b><b>Number (N)ine<span>/</span></b><b>Saint Laurent<span>/</span></b><b>If Six Was Nine<span>/</span></b>
+</div>
+</div>
+
+<!-- catalog -->
+<section id="catalog">
+<div class="section-head reveal">
+<h2>Каталог / В наличии</h2>
+<span class="count" id="count"></span>
+</div>
+<div class="filters reveal" id="filters">
+<button class="active" data-cat="all">Все</button>
+<button data-cat="Обувь">Обувь</button>
+<button data-cat="Верх">Верх</button>
+<button data-cat="Низ">Низ</button>
+<button data-cat="Аксессуары">Аксессуары</button>
+</div>
+<div class="grid" id="grid"></div>
+</section>
+
+<!-- split 1 -->
+<section class="split reveal">
+<div class="split__media"><img id="sp1" src="" alt="Качество 1:1 — брендовые вещи SOLOIST"></div>
+<div class="split__text">
+<h3>1:1 к<br>оригиналу</h3>
+<p>Привозим оригинал, реплику 1в1 и качественные альтернативы. Все бирки, гравировки и фурнитура на месте. Достанем почти любую расцветку — узнавайте детали у менеджера.</p>
+<a href="https://t.me/USERSOLOIST" target="_blank" rel="noopener" class="btn">Подобрать вещь<span class="arr">→</span></a>
+</div>
+</section>
+
+<!-- split 2 -->
+<section class="split split--rev reveal">
+<div class="split__media"><img id="sp2" src="" alt="Отзывы и отчёты клиентов SOLOIST"></div>
+<div class="split__text">
+<h3>Отзывы<br>и отчёты</h3>
+<p>Более 500 довольных клиентов, реальные отзывы и фото-отчёты о доставке. Открытый чат сообщества — убедитесь сами перед заказом.</p>
+<a href="https://t.me/OTZIVI_SOLOIST" target="_blank" rel="noopener" class="btn">Читать отзывы<span class="arr">→</span></a>
+</div>
+</section>
+
+<!-- feature band -->
+<div class="band reveal">
+<div class="band__c"><span class="k">Доставка</span><span class="v"><b>25</b> раб. дней — стандарт<br><b>7</b> дней — экспресс</span></div>
+<div class="band__c"><span class="k">География</span><span class="v">Россия, Беларусь<br>и Казахстан (СДЭК)</span></div>
+<div class="band__c"><span class="k">Гарантия</span><span class="v">Полный возврат при браке,<br>пересорте или задержке</span></div>
+<div class="band__c"><span class="k">Поддержка</span><span class="v">Консультация <b>24/7</b><br>подбор размера и расцветки</span></div>
+</div>
+
+<!-- CTA -->
+<section class="cta reveal">
+<span class="cta__eyebrow">Нет в каталоге?</span>
+<h2>Не нашёл<br>своё?</h2>
+<p>Найдём абсолютно любую вещь по одному фото. Пришлите менеджеру картинку нужного айтема — подберём, назовём цену и доставим.</p>
+<div class="cta__btns">
+<a href="https://t.me/USERSOLOIST" target="_blank" rel="noopener" class="btn btn--light">Найти по фото <span class="arr">→</span></a>
+<button class="btn btn--lineW" id="condBtn3">Условия заказа</button>
+</div>
+</section>
+
+<!-- footer -->
+<footer>
+<div class="foot-grid">
+<div class="foot-logo">SOLOIST<span>Онлайн-магазин брендовых и дизайнерских вещей</span></div>
+<div class="foot-col">
+<h4>Магазин</h4>
+<a href="#catalog">Каталог</a>
+<button id="condBtn4">Условия заказа</button>
+<a href="https://t.me/soloist_store/430" target="_blank" rel="noopener">Реферальная система</a>
+<a href="https://t.me/soloist_store" target="_blank" rel="noopener">Telegram-канал</a>
+</div>
+<div class="foot-col">
+<h4>Связь</h4>
+<a href="https://t.me/USERSOLOIST" target="_blank" rel="noopener">Менеджер</a>
+<a href="https://t.me/OTZIVI_SOLOIST" target="_blank" rel="noopener">Отзывы</a>
+<a href="https://t.me/soloist_chat" target="_blank" rel="noopener">Чат</a>
+</div>
+</div>
+<div class="foot-bottom">
+<span>© 2026 SOLOIST STORE</span>
+<span>With Love, SOLOIST</span>
+</div>
+</footer>
+
+<!-- conditions modal -->
+<div class="modal" id="modal" aria-hidden="true">
+<div class="modal__bg" data-close></div>
+<div class="modal__panel" role="dialog" aria-modal="true" aria-label="Условия заказа">
+<div class="modal__head">
+<h3>Условия заказа</h3>
+<button data-close aria-label="Закрыть">✕</button>
+</div>
+<div class="modal__body">
+<div class="cond__hi">
+<p><b>SOLOIST</b> — онлайн-магазин брендовых и дизайнерских вещей. Привозим оригинал, реплику 1в1 к оригиналу и похожие силуэты хорошего качества.</p>
+<p>Все вещи — исключительно качество 1:1. В случае несоответствия гарантируется полный возврат средств и товара.</p>
+</div>
+
+<div class="cond-sec">
+<div class="num">1</div>
+<h4>Информация о нас</h4>
+<p>Найдём любой ваш айтем всего лишь по одному фото или названию. Также найдём почти любой мерч ваших артистов — всё производство фабричное.</p>
+<p>О наличии товаров можно узнавать по хештегу<b>#наличие</b>. Если вашего товара не оказалось в наличии, либо нужна другая расцветка — мы подберём и доставим его вам.</p>
+</div>
+
+<div class="cond-sec">
+<div class="num">2</div>
+<h4>Согласие с условиями</h4>
+<p>Делая заказ в нашем магазине, вы автоматически соглашаетесь с условиями.</p>
+<div class="cond-note">Клиент вправе отказаться от заказа в течение<b>48 часов</b> после ознакомления с условиями — согласно ст. 782 ГК РФ, без штрафных санкций.</div>
+</div>
+
+<div class="cond-sec">
+<div class="num">3</div>
+<h4>Сроки доставки 📆</h4>
+<div class="cond-item"><div class="n">1</div><div class="t"><b>Стандартная доставка</b>Учитывается в стоимости товара и входит в указанную в посте сумму. Срок — 25 рабочих дней.</div></div>
+<div class="cond-item"><div class="n">2</div><div class="t"><b>Экспресс-доставка</b>Стоимость уточняйте у менеджера — она индивидуальна для каждого айтема. Срок — 7 рабочих дней.</div></div>
+<div class="cond-item"><div class="n">3</div><div class="t"><b>РБ и Казахстан</b>Доставляем в Беларусь и Казахстан, в основном через СДЭК.</div></div>
+<div class="cond-note">Каждый способ имеет погрешность 14 рабочих дней. Если товар не был доставлен в РФ за этот срок — выдаётся компенсация.</div>
+</div>
+
+<div class="cond-sec">
+<div class="num">4</div>
+<h4>Возврат и компенсация</h4>
+<div class="cond-item"><div class="n">·</div><div class="t"><b>Брак или повреждение</b>Полностью возместим ущерб и ваши средства.</div></div>
+<div class="cond-item"><div class="n">·</div><div class="t"><b>Несоответствие размера</b>Если пришёл совсем другой размер — полная компенсация.</div></div>
+<div class="cond-item"><div class="n">·</div><div class="t"><b>Задержка доставки</b>Если срок превысил 3 месяца — полный возврат средств.</div></div>
+</div>
+
+<div class="cond-sec">
+<div class="num">5</div>
+<h4>Чем мы отличаемся</h4>
+<div class="cond-item"><div class="n">1</div><div class="t">Полное руководство по качеству — консультация по материалам и деталям.</div></div>
+<div class="cond-item"><div class="n">2</div><div class="t">Лучший подход к клиентам с этапа оформления заказа.</div></div>
+<div class="cond-item"><div class="n">3</div><div class="t">Самые низкие цены, выгодные условия и персональные предложения.</div></div>
+<p class="cond-foot">Благодарим за выбор именно нас 🙏<br><b>With Love, SOLOIST</b></p>
+</div>
+</div>
+<div class="modal__cta">
+<a href="https://t.me/USERSOLOIST" target="_blank" rel="noopener" class="btn" style="width:100%">Написать менеджеру<span class="arr">→</span></a>
+</div>
+</div>
+</div>
+
+<script>
+const PRODUCTS = [{"n": "Джинсы", "b": "Jaded London", "cat": "Низ", "img": "assets/products/p1.jpg", "price": 4490, "old": 9990}, {"n": "Джинсы", "b": "Rick Owens", "cat": "Низ", "img": "assets/products/p2.jpg", "price": 2490, "old": 3990}, {"n": "Футболка", "b": "Hysteric Glamour", "cat": "Верх", "img": "assets/products/p3.jpg", "price": 2290, "old": 9990}, {"n": "Футболка", "b": "If Six Was Nine", "cat": "Верх", "img": "assets/products/p4.jpg", "price": 2990, "old": 9990}, {"n": "Кофта", "b": "Undercover", "cat": "Верх", "img": "assets/products/p5.jpg", "price": 7990, "old": 9990}, {"n": "Худи", "b": "Prism", "cat": "Верх", "img": "assets/products/p6.jpg", "price": 3490, "old": 9990}, {"n": "Шорты", "b": "Anna Bolina", "cat": "Низ", "img": "assets/products/p7.jpg", "price": 3490, "old": 9990}, {"n": "Ботинки", "b": "Converse", "cat": "Обувь", "img": "assets/products/p8.jpg", "price": 5990, "old": 9990}, {"n": "Худи", "b": "Club-Un", "cat": "Верх", "img": "assets/products/p9.jpg", "price": 3890, "old": 9990}, {"n": "Футболка", "b": "Undercover", "cat": "Верх", "img": "assets/products/p10.jpg", "price": 2290, "old": 9990}, {"n": "Шорты", "b": "Number (N)ine", "cat": "Низ", "img": "assets/products/p11.jpg", "price": 5290, "old": 8990}, {"n": "Кофта", "b": "Enfants Riches Déprimés", "cat": "Верх", "img": "assets/products/p12.jpg", "price": 2990, "old": 9990}, {"n": "Футболка", "b": "Artistic Research", "cat": "Верх", "img": "assets/products/p13.jpg", "price": 2290, "old": 9990}, {"n": "Ботинки", "b": "Rick Owens", "cat": "Обувь", "img": "assets/products/p14.jpg", "price": 8490, "old": 9990}, {"n": "Майка", "b": "Paly Hollywood", "cat": "Верх", "img": "assets/products/p15.jpg", "price": 2990, "old": 9990}, {"n": "Лонгслив", "b": "If Six Was Nine", "cat": "Верх", "img": "assets/products/p16.jpg", "price": 4490, "old": 6990}, {"n": "Футболка", "b": "Enfants Riches Déprimés", "cat": "Верх", "img": "assets/products/p17.jpg", "price": 3490, "old": 7490}, {"n": "Бомбер", "b": "Balenciaga", "cat": "Верх", "img": "assets/products/p18.jpg", "price": 13990, "old": 18990}, {"n": "Кофта", "b": "LGB Archive", "cat": "Верх", "img": "assets/products/p19.jpg", "price": 7490, "old": 7990}, {"n": "Шорты", "b": "Number (N)ine", "cat": "Низ", "img": "assets/products/p20.jpg", "price": 5490, "old": 7990}, {"n": "Лонгслив", "b": "If Six Was Nine", "cat": "Верх", "img": "assets/products/p21.jpg", "price": 5990, "old": 9990}, {"n": "Ботинки", "b": "Rick Owens Geobasket", "cat": "Обувь", "img": "assets/products/p22.jpg", "price": 9490, "old": 11990}, {"n": "Футболка", "b": "Nine Inch Nails", "cat": "Верх", "img": "assets/products/p23.jpg", "price": 2290, "old": 5990}, {"n": "Сумка", "b": "Nenet", "cat": "Аксессуары", "img": "assets/products/p24.jpg", "price": 2290, "old": 9990}];
+// Always start from top on page load
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+window.addEventListener('load',()=>{window.scrollTo(0,0);if(location.hash)history.replaceState(null,'',location.pathname);});
+
+const MANAGER="https://t.me/USERSOLOIST";
+const fmt=n=>n.toLocaleString('ru-RU')+" ₽";
+const grid=document.getElementById('grid');
+
+function render(cat){
+ const list=cat==="all"?PRODUCTS:PRODUCTS.filter(p=>p.cat===cat);
+ grid.innerHTML=list.map((p,i)=>{
+  const off=p.old?Math.round((1-p.price/p.old)*100):0;
+  const pidx=PRODUCTS.indexOf(p);
+  return `<article class="card" style="transition-delay:${(i%8)*55}ms">
+<div class="card__media">
+    ${p.old?`<span class="tag">-${off}%</span>`:`<span class="tag tag--new">NEW</span>`}
+<img src="${p.img}" alt="${p.b} ${p.n}" loading="lazy">
+<button class="card__buy" onclick="addToCart(${pidx})">В корзину</button>
+</div>
+<div class="card__info">
+<div class="card__name">${p.n}</div>
+<div class="card__brand">${p.b}</div>
+<div class="card__price">
+<span class="now">${fmt(p.price)}</span>
+     ${p.old?`<span class="was">${fmt(p.old)}</span><span class="off">-${off}%</span>`:``}
+</div>
+</div>
+</article>`;
+ }).join('');
+ observeCards();
+ const n=list.length;
+ document.getElementById('count').textContent=n+" позиц"+(n%10===1&&n!==11?"ия":(n%10>=2&&n%10<=4&&!(n>=12&&n<=14)?"ии":"ий"));
+}
+function observeCards(){
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+ document.querySelectorAll('.card').forEach(c=>io.observe(c));
+}
+document.getElementById('filters').addEventListener('click',e=>{
+ if(e.target.tagName!=='BUTTON')return;
+ document.querySelectorAll('#filters button').forEach(b=>b.classList.remove('active'));
+ e.target.classList.add('active');render(e.target.dataset.cat);
+});
+render('all');
+
+// split images = pick a shoe + a top from catalog
+(function(){
+ document.getElementById('sp1').src='assets/products/p22.jpg';
+ document.getElementById('sp2').src='assets/products/p18.jpg';
+})();
+
+// reveal
+const rio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>rio.observe(el));
+
+// header always visible
+
+// mobile nav
+const mnav=document.getElementById('mnav');
+document.getElementById('burger').onclick=()=>mnav.classList.add('open');
+document.getElementById('mclose').onclick=()=>mnav.classList.remove('open');
+mnav.querySelectorAll('a').forEach(a=>a.onclick=()=>mnav.classList.remove('open'));
+
+// ============ CART ============
+let cart=JSON.parse(localStorage.getItem('soloist_cart')||'[]');
+
+function saveCart(){localStorage.setItem('soloist_cart',JSON.stringify(cart))}
+function cartCount(){return cart.reduce((s,i)=>s+i.qty,0)}
+function cartTotal(){return cart.reduce((s,i)=>s+i.price*i.qty,0)}
+
+function addToCart(idx){
+ const p=PRODUCTS[idx];
+ const ex=cart.find(i=>i.idx===idx);
+ if(ex)ex.qty++;
+ else cart.push({idx,n:p.n,b:p.b,img:p.img,price:p.price,qty:1});
+ saveCart();updateCartBadge();showCartToast(p);
+}
+function removeFromCart(idx){cart=cart.filter(i=>i.idx!==idx);saveCart();renderCartDrawer();updateCartBadge()}
+function changeQty(idx,delta){
+ const ex=cart.find(i=>i.idx===idx);
+ if(!ex)return;
+ ex.qty+=delta;
+ if(ex.qty<=0)removeFromCart(idx);
+ else{saveCart();renderCartDrawer();updateCartBadge();}
+}
+function updateCartBadge(){
+ const n=cartCount();
+ document.querySelectorAll('.cart-badge').forEach(b=>{b.textContent=n;b.style.display=n?'flex':'none'});
+}
+function showCartToast(p){
+ let t=document.getElementById('cartToast');
+ t.textContent='«'+p.b+' '+p.n+'» добавлен в корзину';
+ t.classList.add('show');
+ clearTimeout(t._timer);
+ t._timer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function renderCartDrawer(){
+ const body=document.getElementById('cartBody');
+ const foot=document.getElementById('cartFoot');
+ if(!cart.length){
+  body.innerHTML='<div class="cart-empty"><span>Корзина пуста</span></div>';
+  foot.style.display='none';return;
+ }
+ foot.style.display='block';
+ body.innerHTML=cart.map(item=>`
+  <div class="cart-item">
+   <img src="${item.img}" alt="${item.n}">
+   <div class="cart-item__info">
+    <div class="cart-item__name">${item.b} ${item.n}</div>
+    <div class="cart-item__price">${fmt(item.price)}</div>
+    <div class="cart-item__qty">
+     <button onclick="changeQty(${item.idx},-1)">−</button>
+     <span>${item.qty}</span>
+     <button onclick="changeQty(${item.idx},+1)">+</button>
+    </div>
+   </div>
+   <button class="cart-item__del" onclick="removeFromCart(${item.idx})">✕</button>
+  </div>`).join('');
+ document.getElementById('cartTotal').textContent=fmt(cartTotal());
+}
+
+function openCart(){renderCartDrawer();document.getElementById('cartDrawer').classList.add('open');document.body.classList.add('lock')}
+function closeCart(){document.getElementById('cartDrawer').classList.remove('open');document.body.classList.remove('lock')}
+function goCheckout(){closeCart();openCheckout()}
+function openCheckout(){document.getElementById('checkoutPage').classList.add('open');document.body.classList.add('lock');renderOrderSummary()}
+function closeCheckout(){document.getElementById('checkoutPage').classList.remove('open');document.body.classList.remove('lock')}
+
+function renderOrderSummary(){
+ document.getElementById('orderSummary').innerHTML=cart.map(i=>`
+  <div class="order-row">
+   <img src="${i.img}" alt="${i.n}">
+   <div><div class="or-name">${i.b} ${i.n}</div><div class="or-qty">${i.qty} шт. × ${fmt(i.price)}</div></div>
+   <div class="or-sum">${fmt(i.price*i.qty)}</div>
+  </div>`).join('');
+ document.getElementById('orderTotal2').textContent=fmt(cartTotal());
+}
+
+async function submitOrder(e){
+ e.preventDefault();
+ const f=e.target;
+ const name=f.fio.value.trim();
+ const addr=f.address.value.trim();
+ const tg=f.tg.value.trim().replace(/^@/,'');
+ const comment=f.comment.value.trim();
+
+ const items=cart.map(i=>`• ${i.b} ${i.n} × ${i.qty} = ${fmt(i.price*i.qty)}`).join('\n');
+ const total=fmt(cartTotal());
+
+ const text=`🛍 НОВЫЙ ЗАКАЗ — SOLOIST\n\n`+
+  `👤 Имя: ${name}\n`+
+  `📦 Адрес доставки: ${addr}\n`+
+  `💬 Telegram: @${tg}\n`+
+  (comment?`📝 Комментарий: ${comment}\n`:'')+
+  `\nСостав заказа:\n${items}\n\n`+
+  `💰 Итого: ${total}`;
+
+ const btn=f.querySelector('.checkout-submit');
+ btn.textContent='Отправляем...';btn.disabled=true;
+
+ try{
+  const res=await fetch('/api/order',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    name,address:addr,telegram:tg,comment,
+    items:cart.map(i=>({brand:i.b,name:i.n,quantity:i.qty,price:i.price})),
+    total:cartTotal()
+   })
+  });
+  const data=await res.json();
+  if(data.ok){
+   cart=[];saveCart();updateCartBadge();
+   closeCheckout();
+   showSuccess();
+  }else throw new Error(data.description);
+ }catch(err){
+  btn.textContent='Оформить заказ';btn.disabled=false;
+  window.open(`${MANAGER}?text=${encodeURIComponent(text)}`,'_blank','noopener');
+  alert('Автоматическая отправка недоступна. Заказ открыт в чате с менеджером — нажмите «Отправить» в Telegram.');
+ }
+}
+
+function showSuccess(){
+ document.getElementById('successPage').classList.add('open');
+ document.body.classList.add('lock');
+}
+function closeSuccess(){
+ document.getElementById('successPage').classList.remove('open');
+ document.body.classList.remove('lock');
+}
+
+render('all');
+updateCartBadge();
+
+// conditions modal
+const modal=document.getElementById('modal');
+function openCond(){mnav.classList.remove('open');modal.classList.add('open');document.body.classList.add('lock')}
+function closeCond(){modal.classList.remove('open');document.body.classList.remove('lock')}
+['condBtn1','condBtn2','condBtn3','condBtn4','condBtnM'].forEach(id=>{const el=document.getElementById(id);if(el)el.onclick=openCond});
+modal.querySelectorAll('[data-close]').forEach(el=>el.onclick=closeCond);
+addEventListener('keydown',e=>{if(e.key==='Escape')closeCond()});
+
+// duplicate marquees
+['ticker','brands'].forEach(id=>{const t=document.getElementById(id);t.innerHTML+=t.innerHTML});
+</script>
+</body>
+</html>

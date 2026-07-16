@@ -1,0 +1,26 @@
+[Unit]
+Description=SOLOIST Telegram product agent
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=soloist
+Group=soloist
+WorkingDirectory=/opt/soloist-agent
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONPATH=/opt/soloist-agent/src
+ExecStart=/opt/soloist-agent/.venv/bin/python -m soloist_agent run
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/soloist-agent
+
+[Install]
+WantedBy=multi-user.target
