@@ -70,6 +70,43 @@ class PostTests(unittest.TestCase):
         self.assertTrue(post.endswith("#Кепка #ChromeHearts"))
         self.assertNotIn("#Одежда", post)
 
+    def test_cyrillic_words_never_enter_brand_hashtag(self) -> None:
+        price = PriceResult(3490, 6990, 50, 0, 0, 3790, 3490)
+        bag = NormalizedProduct(
+            accepted=True,
+            title="Сумка YUEN из кожи",
+            brand="YUEN из кожи",
+            category="other",
+            sizes="S-XXL",
+            super_heavy=False,
+        )
+        hoodie = NormalizedProduct(
+            accepted=True,
+            title="Худи Opium laser на молнии",
+            brand="Opium laser на молнии",
+            category="sweater",
+            sizes="S-XXL",
+            super_heavy=False,
+        )
+        jeans = NormalizedProduct(
+            accepted=True,
+            title="Джинсы No faith studios Cargo",
+            brand="No faith studios Cargo",
+            category="jeans",
+            sizes="S-XXL",
+            super_heavy=False,
+        )
+
+        bag_post = render_post(bag, price)
+        hoodie_post = render_post(hoodie, price)
+        jeans_post = render_post(jeans, price)
+
+        self.assertTrue(bag_post.endswith("#Сумка #YUEN"))
+        self.assertTrue(hoodie_post.endswith("#Худи #OPIUM"))
+        self.assertTrue(jeans_post.endswith("#Джинсы #NoFaithStudios"))
+        self.assertNotIn("изкожи", bag_post.lower())
+        self.assertNotIn("намолнии", hoodie_post.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

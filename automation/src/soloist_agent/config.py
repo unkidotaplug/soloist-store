@@ -66,6 +66,10 @@ DEFAULT_KEYWORDS = [
     "Maison Mihara Yasuhiro",
     "Thug Club",
     "Vetements",
+    "Yen",
+    "YUEN",
+    "Opium",
+    "No Faith Studios",
 ]
 
 

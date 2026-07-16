@@ -77,6 +77,10 @@ BRAND_HASHTAGS = {
     "maisonmiharayasuhiro": "MaisonMihara",
     "thugclub": "ThugClub",
     "vetements": "Vetements",
+    "yen": "Yen",
+    "yuen": "YUEN",
+    "opium": "OPIUM",
+    "nofaithstudios": "NoFaithStudios",
 }
 
 
@@ -89,7 +93,9 @@ def _category_hashtag(product: NormalizedProduct) -> str:
 
 def _brand_hashtag(brand: str) -> str:
     without_noise = re.sub(r"\b(?:ARCHIVE|TYPE)\b", "", brand, flags=re.IGNORECASE)
-    normalized = normalize_hashtag(without_noise)
+    tokens = re.findall(r"[0-9A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё]+", without_noise)
+    latin_tokens = [token for token in tokens if not re.search(r"[А-Яа-яЁё]", token)]
+    normalized = normalize_hashtag(" ".join(latin_tokens))
     folded = normalized.casefold()
     exact = BRAND_HASHTAGS.get(folded)
     if exact:
