@@ -10,7 +10,6 @@ from html import escape
 from typing import Any
 
 from .config import Settings
-from .cover import create_product_cover
 from .database import Database
 from .http import HttpError, request
 from .models import Draft
@@ -108,22 +107,14 @@ class TelegramAPI:
                     file_ids.append(file_id)
         return file_ids
 
-    @staticmethod
-    def _album_caption(post_html: str) -> str:
-        title, separator, body = post_html.partition("\n\n")
-        if separator and title.startswith("<b>") and title.endswith("</b>") and body:
-            return body
-        return post_html
-
     async def _send_media_references(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
-        caption = self._album_caption(draft.post_html)
         if len(media) == 1:
             return await self.call(
                 "sendPhoto",
                 {
                     "chat_id": chat_id,
                     "photo": media[0],
-                    "caption": caption,
+                    "caption": draft.post_html,
                     "parse_mode": "HTML",
                 },
             )
@@ -131,7 +122,7 @@ class TelegramAPI:
         for index, reference in enumerate(media):
             item: dict[str, Any] = {"type": "photo", "media": reference}
             if index == 0:
-                item.update({"caption": caption, "parse_mode": "HTML"})
+                item.update({"caption": draft.post_html, "parse_mode": "HTML"})
             album.append(item)
         return await self.call("sendMediaGroup", {"chat_id": chat_id, "media": album})
 
@@ -155,28 +146,23 @@ class TelegramAPI:
         if not media:
             await self.send_message(chat_id, draft.post_html)
             return []
-        if all(not item.startswith(("http://", "https://")) for item in media):
+        try:
+            result = await self._send_media_references(chat_id, draft, media)
+            return self._file_ids(result)
+        except (TelegramAPIError, HttpError):
+            refreshed = await self._refresh_media(draft)
+            if refreshed:
+                media = refreshed
             try:
                 result = await self._send_media_references(chat_id, draft, media)
                 return self._file_ids(result)
             except (TelegramAPIError, HttpError):
-                refreshed = await self._refresh_media(draft)
-                if not refreshed:
-                    raise
-                media = refreshed
-        try:
-            result = await self._upload_media(chat_id, draft, media)
-            return self._file_ids(result)
-        except (TelegramAPIError, HttpError):
-            refreshed = await self._refresh_media(draft)
-            if not refreshed or refreshed == media:
-                raise
-            result = await self._upload_media(chat_id, draft, refreshed)
-            return self._file_ids(result)
+                result = await self._upload_media(chat_id, draft, media)
+                return self._file_ids(result)
 
     async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
-        originals: list[tuple[str, str, str, bytes]] = []
-        for index, url in enumerate(media[:9]):
+        files: list[tuple[str, str, str, bytes]] = []
+        for index, url in enumerate(media):
             try:
                 response = await request(url, timeout=45)
             except HttpError:
@@ -185,20 +171,26 @@ class TelegramAPI:
             if not content_type.startswith("image/"):
                 continue
             extension = mimetypes.guess_extension(content_type) or ".jpg"
-            originals.append((f"photo{index}", f"photo{index}{extension}", content_type, response.body))
-        if not originals:
+            files.append((f"photo{index}", f"photo{index}{extension}", content_type, response.body))
+        if not files:
             raise TelegramAPIError("No downloadable images")
-        try:
-            cover = create_product_cover(originals[0][3], draft.title)
-        except Exception as exc:
-            raise TelegramAPIError(f"Cover generation failed: {exc}") from exc
-        files = [("cover", "soloist-cover.jpg", "image/jpeg", cover), *originals]
-        caption = self._album_caption(draft.post_html)
+        if len(files) == 1:
+            field_name = files[0][0]
+            return await self.call_multipart(
+                "sendPhoto",
+                {
+                    "chat_id": chat_id,
+                    "photo": f"attach://{field_name}",
+                    "caption": draft.post_html,
+                    "parse_mode": "HTML",
+                },
+                files,
+            )
         album: list[dict[str, str]] = []
         for index, (field_name, _, _, _) in enumerate(files):
             item = {"type": "photo", "media": f"attach://{field_name}"}
             if index == 0:
-                item.update({"caption": caption, "parse_mode": "HTML"})
+                item.update({"caption": draft.post_html, "parse_mode": "HTML"})
             album.append(item)
         return await self.call_multipart(
             "sendMediaGroup",
