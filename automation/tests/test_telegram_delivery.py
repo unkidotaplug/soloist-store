@@ -13,6 +13,15 @@ class RecordingTelegramAPI(TelegramAPI):
         self.calls.append((method, payload or {}))
         return {"message_id": 1}
 
+    async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]):
+        self.calls.append(
+            (
+                "sendMediaGroup",
+                {"chat_id": chat_id, "caption": self._album_caption(draft.post_html), "media": media},
+            )
+        )
+        return [{"photo": [{"file_id": "cover-file-id"}]}]
+
 
 class RefreshingTelegramAPI(RecordingTelegramAPI):
     def __init__(self) -> None:
@@ -31,6 +40,12 @@ class RefreshingTelegramAPI(RecordingTelegramAPI):
     async def _refresh_media(self, draft: Draft) -> list[str]:
         self.refreshed = True
         return ["https://fresh.example/one.jpg", "https://fresh.example/two.jpg"]
+
+    async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]):
+        if not self.refreshed:
+            raise TelegramAPIError("failed to get HTTP URL content")
+        self.calls.append(("sendMediaGroup", {"chat_id": chat_id, "media": media}))
+        return [{"photo": [{"file_id": "small"}, {"file_id": "permanent-file-id"}]}]
 
 
 class BrokenTelegramAPI(RecordingTelegramAPI):
@@ -61,9 +76,28 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         await api.send_draft(123, draft)
 
-        self.assertEqual([method for method, _ in api.calls], ["sendPhoto"])
+        self.assertEqual([method for method, _ in api.calls], ["sendMediaGroup"])
         self.assertNotIn("Черновик", str(api.calls))
         self.assertNotIn("#42", str(api.calls))
+
+    async def test_album_caption_does_not_repeat_title_from_cover(self) -> None:
+        api = RecordingTelegramAPI()
+        draft = Draft(
+            id=43,
+            source="telegram",
+            external_id="ikarushop:4994",
+            source_url="https://t.me/ikarushop/4994",
+            title="Куртка Rick Owens",
+            post_html="<b>Куртка Rick Owens</b>\n\nРазмеры: S-XXL\n\nЦена: <b>4490₽</b>",
+            media=["https://cdn.example/photo.jpg"],
+            price=PriceResult(4490, 8990, 50, 0, 0, 4400, 4400),
+        )
+
+        await api.send_draft(123, draft)
+
+        caption = api.calls[0][1]["caption"]
+        self.assertTrue(caption.startswith("Размеры: S-XXL"))
+        self.assertNotIn("Куртка Rick Owens", caption)
 
     async def test_expired_urls_are_refreshed_and_file_ids_are_returned(self) -> None:
         api = RefreshingTelegramAPI()
