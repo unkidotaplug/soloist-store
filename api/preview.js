@@ -34,12 +34,15 @@ export default function handler(request, response) {
 
   const title = clean(request.query.title, 180) || "SOLOIST";
   const image = safeImage(request.query.image);
+  const previewImage = image.startsWith(SITE_URL)
+    ? image
+    : `${SITE_URL}/api/image?url=${encodeURIComponent(image)}`;
   const canonical = new URL(`${SITE_URL}/api/preview`);
   canonical.searchParams.set("title", title);
   canonical.searchParams.set("image", image);
 
   const safeTitle = escapeHtml(title);
-  const safeImageUrl = escapeHtml(image);
+  const safeImageUrl = escapeHtml(previewImage);
   const safeCanonical = escapeHtml(canonical.toString());
   response.setHeader("Content-Type", "text/html; charset=utf-8");
   response.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
@@ -57,6 +60,9 @@ export default function handler(request, response) {
   <meta property="og:url" content="${safeCanonical}">
   <meta property="og:image" content="${safeImageUrl}">
   <meta property="og:image:secure_url" content="${safeImageUrl}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1080">
+  <meta property="og:image:height" content="1350">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:image" content="${safeImageUrl}">
