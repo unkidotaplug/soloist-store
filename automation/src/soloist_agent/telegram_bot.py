@@ -122,7 +122,7 @@ class TelegramAPI:
     @staticmethod
     def _preview_url(draft: Draft, image_url: str) -> str:
         query = urlencode({"title": draft.title, "image": image_url})
-        return f"https://soloist.store/api/preview?{query}"
+        return f"https://soloist-store.vercel.app/api/preview?{query}"
 
     async def _send_media_references(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
         title = self._title_caption(draft)
