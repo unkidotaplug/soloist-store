@@ -107,50 +107,22 @@ class TelegramAPI:
                     file_ids.append(file_id)
         return file_ids
 
-    @staticmethod
-    def _title_caption(draft: Draft) -> str:
-        return f"<b>{escape(draft.title)}</b>"
-
-    @staticmethod
-    def _body_caption(draft: Draft) -> str:
-        title, separator, body = draft.post_html.partition("\n\n")
-        if separator and title.startswith("<b>") and title.endswith("</b>"):
-            return body
-        return ""
-
-    async def _finish_media_delivery(self, chat_id: int, draft: Draft, result: Any) -> list[str]:
-        body = self._body_caption(draft)
-        if body:
-            await self.send_message(chat_id, body)
-        return self._file_ids(result)
-
     async def _send_media_references(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
-        title = self._title_caption(draft)
         if len(media) == 1:
             return await self.call(
                 "sendPhoto",
                 {
                     "chat_id": chat_id,
                     "photo": media[0],
-                    "caption": title,
+                    "caption": draft.post_html,
                     "parse_mode": "HTML",
-                    "show_caption_above_media": True,
                 },
             )
         album = []
         for index, reference in enumerate(media):
-            item: dict[str, Any] = {
-                "type": "photo",
-                "media": reference,
-                "show_caption_above_media": True,
-            }
+            item: dict[str, Any] = {"type": "photo", "media": reference}
             if index == 0:
-                item.update(
-                    {
-                        "caption": title,
-                        "parse_mode": "HTML",
-                    }
-                )
+                item.update({"caption": draft.post_html, "parse_mode": "HTML"})
             album.append(item)
         return await self.call("sendMediaGroup", {"chat_id": chat_id, "media": album})
 
@@ -176,17 +148,17 @@ class TelegramAPI:
             return []
         try:
             result = await self._send_media_references(chat_id, draft, media)
-            return await self._finish_media_delivery(chat_id, draft, result)
+            return self._file_ids(result)
         except (TelegramAPIError, HttpError):
             refreshed = await self._refresh_media(draft)
             if refreshed:
                 media = refreshed
             try:
                 result = await self._send_media_references(chat_id, draft, media)
-                return await self._finish_media_delivery(chat_id, draft, result)
+                return self._file_ids(result)
             except (TelegramAPIError, HttpError):
                 result = await self._upload_media(chat_id, draft, media)
-                return await self._finish_media_delivery(chat_id, draft, result)
+                return self._file_ids(result)
 
     async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
         files: list[tuple[str, str, str, bytes]] = []
@@ -209,26 +181,16 @@ class TelegramAPI:
                 {
                     "chat_id": chat_id,
                     "photo": f"attach://{field_name}",
-                    "caption": self._title_caption(draft),
+                    "caption": draft.post_html,
                     "parse_mode": "HTML",
-                    "show_caption_above_media": True,
                 },
                 files,
             )
         album: list[dict[str, str]] = []
         for index, (field_name, _, _, _) in enumerate(files):
-            item = {
-                "type": "photo",
-                "media": f"attach://{field_name}",
-                "show_caption_above_media": True,
-            }
+            item = {"type": "photo", "media": f"attach://{field_name}"}
             if index == 0:
-                item.update(
-                    {
-                        "caption": self._title_caption(draft),
-                        "parse_mode": "HTML",
-                    }
-                )
+                item.update({"caption": draft.post_html, "parse_mode": "HTML"})
             album.append(item)
         return await self.call_multipart(
             "sendMediaGroup",

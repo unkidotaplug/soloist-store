@@ -62,36 +62,8 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
         await api.send_draft(123, draft)
 
         self.assertEqual([method for method, _ in api.calls], ["sendPhoto"])
-        self.assertEqual(api.calls[0][1]["caption"], "<b>Худи PALY HOLLYWOOD</b>")
-        self.assertTrue(api.calls[0][1]["show_caption_above_media"])
         self.assertNotIn("Черновик", str(api.calls))
         self.assertNotIn("#42", str(api.calls))
-
-    async def test_title_is_above_original_media_and_old_body_follows_it(self) -> None:
-        api = RecordingTelegramAPI()
-        draft = Draft(
-            id=43,
-            source="telegram",
-            external_id="ikarushop:4994",
-            source_url="https://t.me/ikarushop/4994",
-            title="Куртка Rick Owens",
-            post_html=(
-                "<b>Куртка Rick Owens</b>\n\n"
-                "Размеры: S-XXL\n\nЦена: <b>4490₽</b> <s>7990₽</s>\n\n"
-                "<blockquote>Описание</blockquote>"
-            ),
-            media=["https://cdn.example/original.jpg"],
-            price=PriceResult(4490, 7990, 44, 0, 0, 4990, 4490),
-        )
-
-        await api.send_draft(123, draft)
-
-        self.assertEqual([method for method, _ in api.calls], ["sendPhoto", "sendMessage"])
-        self.assertEqual(api.calls[0][1]["photo"], "https://cdn.example/original.jpg")
-        self.assertEqual(api.calls[0][1]["caption"], "<b>Куртка Rick Owens</b>")
-        self.assertTrue(api.calls[0][1]["show_caption_above_media"])
-        self.assertTrue(api.calls[1][1]["text"].startswith("Размеры: S-XXL"))
-        self.assertNotIn("Куртка Rick Owens", api.calls[1][1]["text"])
 
     async def test_expired_urls_are_refreshed_and_file_ids_are_returned(self) -> None:
         api = RefreshingTelegramAPI()
@@ -110,9 +82,6 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(file_ids, ["permanent-file-id"])
         self.assertEqual(api.calls[-1][0], "sendMediaGroup")
-        self.assertTrue(
-            all(item["show_caption_above_media"] for item in api.calls[-1][1]["media"])
-        )
         self.assertNotIn("Фото:", str(api.calls))
 
     async def test_total_media_failure_never_sends_raw_urls_as_text(self) -> None:
