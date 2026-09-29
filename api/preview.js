@@ -1,5 +1,4 @@
-const SITE_URL = "https://soloist-store.vercel.app";
-const FALLBACK_IMAGE = `${SITE_URL}/assets/og.jpg`;
+const FALLBACK_IMAGE = "https://soloist.store/assets/og.jpg";
 
 function clean(value, limit) {
   return String(value ?? "")
@@ -34,7 +33,7 @@ export default function handler(request, response) {
 
   const title = clean(request.query.title, 180) || "SOLOIST";
   const image = safeImage(request.query.image);
-  const canonical = new URL(`${SITE_URL}/api/preview`);
+  const canonical = new URL("https://soloist.store/api/preview");
   canonical.searchParams.set("title", title);
   canonical.searchParams.set("image", image);
 
@@ -50,7 +49,7 @@ export default function handler(request, response) {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>${safeTitle}</title>
   <link rel="canonical" href="${safeCanonical}">
-  <link rel="icon" href="${SITE_URL}/assets/favicon-32.png">
+  <link rel="icon" href="https://soloist.store/assets/favicon-32.png">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SOLOIST">
   <meta property="og:title" content="${safeTitle}">
