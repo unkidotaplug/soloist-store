@@ -61,9 +61,11 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         await api.send_draft(123, draft)
 
-        self.assertEqual([method for method, _ in api.calls], ["sendPhoto"])
-        self.assertEqual(api.calls[0][1]["caption"], "<b>Худи PALY HOLLYWOOD</b>")
-        self.assertTrue(api.calls[0][1]["show_caption_above_media"])
+        self.assertEqual([method for method, _ in api.calls], ["sendMessage"])
+        options = api.calls[0][1]["link_preview_options"]
+        self.assertTrue(options["prefer_large_media"])
+        self.assertTrue(options["show_above_text"])
+        self.assertIn("title=%D0%A5%D1%83%D0%B4%D0%B8", options["url"])
         self.assertNotIn("Черновик", str(api.calls))
         self.assertNotIn("#42", str(api.calls))
 
@@ -86,12 +88,12 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         await api.send_draft(123, draft)
 
-        self.assertEqual([method for method, _ in api.calls], ["sendPhoto", "sendMessage"])
-        self.assertEqual(api.calls[0][1]["photo"], "https://cdn.example/original.jpg")
-        self.assertEqual(api.calls[0][1]["caption"], "<b>Куртка Rick Owens</b>")
-        self.assertTrue(api.calls[0][1]["show_caption_above_media"])
-        self.assertTrue(api.calls[1][1]["text"].startswith("Размеры: S-XXL"))
-        self.assertNotIn("Куртка Rick Owens", api.calls[1][1]["text"])
+        self.assertEqual([method for method, _ in api.calls], ["sendMessage"])
+        payload = api.calls[0][1]
+        self.assertTrue(payload["text"].startswith("Размеры: S-XXL"))
+        self.assertNotIn("Куртка Rick Owens", payload["text"])
+        self.assertIn("image=https%3A%2F%2Fcdn.example%2Foriginal.jpg", payload["link_preview_options"]["url"])
+        self.assertTrue(payload["link_preview_options"]["show_above_text"])
 
     async def test_expired_urls_are_refreshed_and_file_ids_are_returned(self) -> None:
         api = RefreshingTelegramAPI()
@@ -108,11 +110,9 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         file_ids = await api.send_draft(123, draft)
 
-        self.assertEqual(file_ids, ["permanent-file-id"])
-        self.assertEqual(api.calls[-1][0], "sendMediaGroup")
-        self.assertTrue(
-            all(item["show_caption_above_media"] for item in api.calls[-1][1]["media"])
-        )
+        self.assertEqual(file_ids, [])
+        self.assertEqual(api.calls[-1][0], "sendMessage")
+        self.assertIn("fresh.example%2Fone.jpg", api.calls[-1][1]["link_preview_options"]["url"])
         self.assertNotIn("Фото:", str(api.calls))
 
     async def test_total_media_failure_never_sends_raw_urls_as_text(self) -> None:
@@ -131,7 +131,8 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(TelegramAPIError):
             await api.send_draft(123, draft)
 
-        self.assertNotIn("sendMessage", [method for method, _ in api.calls])
+        self.assertEqual([method for method, _ in api.calls], ["sendMessage"])
+        self.assertNotIn("https://expired.example/photo.jpg", api.calls[0][1]["text"])
         self.assertNotIn("Фото:", str(api.calls))
 
 

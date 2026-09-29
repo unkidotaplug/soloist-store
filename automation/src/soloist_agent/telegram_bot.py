@@ -8,6 +8,7 @@ import uuid
 from contextlib import suppress
 from html import escape
 from typing import Any
+from urllib.parse import urlencode
 
 from .config import Settings
 from .database import Database
@@ -46,13 +47,17 @@ class TelegramAPI:
         text: str,
         reply_markup: dict[str, Any] | None = None,
         parse_mode: str = "HTML",
+        link_preview_options: dict[str, Any] | None = None,
     ) -> Any:
         payload: dict[str, Any] = {
             "chat_id": chat_id,
             "text": text,
             "parse_mode": parse_mode,
-            "disable_web_page_preview": True,
         }
+        if link_preview_options:
+            payload["link_preview_options"] = link_preview_options
+        else:
+            payload["disable_web_page_preview"] = True
         if reply_markup:
             payload["reply_markup"] = reply_markup
         return await self.call("sendMessage", payload)
@@ -108,21 +113,16 @@ class TelegramAPI:
         return file_ids
 
     @staticmethod
-    def _title_caption(draft: Draft) -> str:
-        return f"<b>{escape(draft.title)}</b>"
-
-    @staticmethod
     def _body_caption(draft: Draft) -> str:
         title, separator, body = draft.post_html.partition("\n\n")
         if separator and title.startswith("<b>") and title.endswith("</b>"):
             return body
         return ""
 
-    async def _finish_media_delivery(self, chat_id: int, draft: Draft, result: Any) -> list[str]:
-        body = self._body_caption(draft)
-        if body:
-            await self.send_message(chat_id, body)
-        return self._file_ids(result)
+    @staticmethod
+    def _preview_url(draft: Draft, image_url: str) -> str:
+        query = urlencode({"title": draft.title, "image": image_url})
+        return f"https://soloist.store/api/preview?{query}"
 
     async def _send_media_references(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
         title = self._title_caption(draft)
@@ -174,19 +174,31 @@ class TelegramAPI:
         if not media:
             await self.send_message(chat_id, draft.post_html)
             return []
+        if not media[0].startswith(("http://", "https://")):
+            refreshed = await self._refresh_media(draft)
+            if not refreshed:
+                raise TelegramAPIError("No public image URL for link preview")
+            media = refreshed
+        body = self._body_caption(draft) or draft.post_html
+        async def send_preview(image_url: str) -> None:
+            await self.send_message(
+                chat_id,
+                body,
+                link_preview_options={
+                    "url": self._preview_url(draft, image_url),
+                    "prefer_large_media": True,
+                    "show_above_text": True,
+                },
+            )
+
         try:
-            result = await self._send_media_references(chat_id, draft, media)
-            return await self._finish_media_delivery(chat_id, draft, result)
+            await send_preview(media[0])
         except (TelegramAPIError, HttpError):
             refreshed = await self._refresh_media(draft)
-            if refreshed:
-                media = refreshed
-            try:
-                result = await self._send_media_references(chat_id, draft, media)
-                return await self._finish_media_delivery(chat_id, draft, result)
-            except (TelegramAPIError, HttpError):
-                result = await self._upload_media(chat_id, draft, media)
-                return await self._finish_media_delivery(chat_id, draft, result)
+            if not refreshed or refreshed[0] == media[0]:
+                raise
+            await send_preview(refreshed[0])
+        return []
 
     async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
         files: list[tuple[str, str, str, bytes]] = []
