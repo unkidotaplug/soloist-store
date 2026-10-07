@@ -82,6 +82,36 @@ class PricingTests(unittest.TestCase):
         self.assertEqual(result.sale_price, result.unrounded_total)
         self.assertEqual(result.sale_price, 3090)
 
+    def test_asphyxia_price_is_1000_more_than_source(self) -> None:
+        candidate = ProductCandidate(
+            source="telegram",
+            external_id="asphyxia_store:53",
+            source_url="https://t.me/asphyxia_store/53",
+            title="Джинсы ENFANTS RICHES DEPRIMES",
+            price=Decimal("4490"),
+            currency="RUB",
+            category="jeans",
+            raw={"channel": "@asphyxia_store"},
+        )
+        result = calculate_price(candidate, self.settings())
+        self.assertEqual(result.procurement_rub, 4490)
+        self.assertEqual(result.markup, 1000)
+        self.assertEqual(result.unrounded_total, 5490)
+        self.assertEqual(result.sale_price, 5490)
+
+    def test_asphyxia_channel_can_be_detected_from_external_id(self) -> None:
+        candidate = ProductCandidate(
+            source="telegram",
+            external_id="asphyxia_store:46",
+            source_url="",
+            title="Ботинки Balenciaga",
+            price=Decimal("8990"),
+            currency="RUB",
+            category="shoes",
+        )
+        result = calculate_price(candidate, self.settings())
+        self.assertEqual(result.sale_price, 9990)
+
     def test_random_values_are_stable_per_product(self) -> None:
         candidate = ProductCandidate(
             source="taobao",

@@ -95,6 +95,7 @@ class Settings:
     competitor_low_price_threshold_rub: int = 3000
     competitor_low_discount_min_rub: int = 200
     competitor_low_discount_max_rub: int = 300
+    asphyxia_markup_rub: int = 1000
     discount_min_percent: int = 25
     discount_max_percent: int = 70
 
@@ -202,6 +203,7 @@ class Settings:
             competitor_low_price_threshold_rub=_int("COMPETITOR_LOW_PRICE_THRESHOLD_RUB", 3000),
             competitor_low_discount_min_rub=_int("COMPETITOR_LOW_DISCOUNT_MIN_RUB", 200),
             competitor_low_discount_max_rub=_int("COMPETITOR_LOW_DISCOUNT_MAX_RUB", 300),
+            asphyxia_markup_rub=_int("ASPHYXIA_MARKUP_RUB", 1000),
             discount_min_percent=_int("DISCOUNT_MIN_PERCENT", 25),
             discount_max_percent=_int("DISCOUNT_MAX_PERCENT", 70),
             openai_api_key=os.getenv("OPENAI_API_KEY", "").strip(),

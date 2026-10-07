@@ -87,6 +87,15 @@ def _competitor_discount(candidate: ProductCandidate, source_rub: int, settings:
     return _rng_for(candidate, "competitor-discount").choice((low, high))
 
 
+def _telegram_channel(candidate: ProductCandidate) -> str:
+    raw_channel = str(candidate.raw.get("channel") or "").strip()
+    if raw_channel:
+        return raw_channel.lstrip("@").casefold()
+    if ":" in candidate.external_id:
+        return candidate.external_id.rsplit(":", 1)[0].strip().lstrip("@").casefold()
+    return ""
+
+
 def _old_price(candidate: ProductCandidate, sale_price: int, settings: Settings) -> tuple[int, int]:
     rng = _rng_for(candidate, "discount")
     target = rng.randint(settings.discount_min_percent, settings.discount_max_percent)
@@ -108,13 +117,17 @@ def calculate_price(candidate: ProductCandidate, settings: Settings) -> PriceRes
 
     if candidate.source == "telegram":
         source_rub = int(candidate.price.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
-        competitor_discount = _competitor_discount(candidate, source_rub, settings)
-        unrounded = max(1, source_rub - competitor_discount)
-        # Telegram shops already publish retail-rounded prices. Preserve an exact
-        # 200/300/500-ruble difference instead of rounding the discount away.
+        if _telegram_channel(candidate) == "asphyxia_store":
+            markup = settings.asphyxia_markup_rub
+            unrounded = source_rub + markup
+        else:
+            competitor_discount = _competitor_discount(candidate, source_rub, settings)
+            unrounded = max(1, source_rub - competitor_discount)
+            markup = 0
+        # Telegram shops already publish retail-rounded prices. Preserve the
+        # exact channel-specific difference instead of rounding it away.
         sale_price = unrounded
         delivery = 0
-        markup = 0
         procurement = source_rub
     else:
         if candidate.currency != "CNY":
