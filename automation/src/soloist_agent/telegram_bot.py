@@ -23,7 +23,7 @@ class TelegramAPIError(RuntimeError):
 
 
 class TelegramAPI:
-    def __init__(self, token: str, watermark_text: str = "SOLOIST", watermark_opacity: int = 120) -> None:
+    def __init__(self, token: str, watermark_text: str = "SOLOIST", watermark_opacity: int = 165) -> None:
         self.base_url = f"https://api.telegram.org/bot{token}"
         self.watermark_text = watermark_text
         self.watermark_opacity = watermark_opacity
