@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import mimetypes
 import sys
 import uuid
 from contextlib import suppress
@@ -16,6 +15,7 @@ from .models import Draft
 from .pipeline import ProductPipeline, ScanResult
 from .sources.taobao_browser import TaobaoBrowserSource
 from .sources.telegram_channel import parse_channel_html
+from .watermark import WatermarkError, apply_center_watermark
 
 
 class TelegramAPIError(RuntimeError):
@@ -23,8 +23,10 @@ class TelegramAPIError(RuntimeError):
 
 
 class TelegramAPI:
-    def __init__(self, token: str) -> None:
+    def __init__(self, token: str, watermark_text: str = "SOLOIST", watermark_opacity: int = 120) -> None:
         self.base_url = f"https://api.telegram.org/bot{token}"
+        self.watermark_text = watermark_text
+        self.watermark_opacity = watermark_opacity
 
     async def call(self, method: str, payload: dict[str, Any] | None = None) -> Any:
         body = payload or {}
@@ -146,19 +148,21 @@ class TelegramAPI:
         if not media:
             await self.send_message(chat_id, draft.post_html)
             return []
-        try:
+        # Telegram file IDs stored after an earlier delivery already point to
+        # images processed by this bot. Fresh source URLs must be downloaded so
+        # the SOLOIST watermark can be applied before upload.
+        if all(not item.startswith(("http://", "https://")) for item in media):
             result = await self._send_media_references(chat_id, draft, media)
+            return self._file_ids(result)
+        try:
+            result = await self._upload_media(chat_id, draft, media)
             return self._file_ids(result)
         except (TelegramAPIError, HttpError):
             refreshed = await self._refresh_media(draft)
-            if refreshed:
-                media = refreshed
-            try:
-                result = await self._send_media_references(chat_id, draft, media)
-                return self._file_ids(result)
-            except (TelegramAPIError, HttpError):
-                result = await self._upload_media(chat_id, draft, media)
-                return self._file_ids(result)
+            if not refreshed:
+                raise
+            result = await self._upload_media(chat_id, draft, refreshed)
+            return self._file_ids(result)
 
     async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]) -> Any:
         files: list[tuple[str, str, str, bytes]] = []
@@ -167,11 +171,20 @@ class TelegramAPI:
                 response = await request(url, timeout=45)
             except HttpError:
                 continue
-            content_type = response.headers.get("content-type", "image/jpeg").split(";", 1)[0]
-            if not content_type.startswith("image/"):
+            source_content_type = response.headers.get("content-type", "image/jpeg").split(";", 1)[0]
+            if not source_content_type.startswith("image/"):
                 continue
-            extension = mimetypes.guess_extension(content_type) or ".jpg"
-            files.append((f"photo{index}", f"photo{index}{extension}", content_type, response.body))
+            try:
+                image = apply_center_watermark(
+                    response.body,
+                    text=self.watermark_text,
+                    opacity=self.watermark_opacity,
+                )
+            except WatermarkError:
+                continue
+            files.append(
+                (f"photo{index}", f"photo{index}{image.extension}", image.content_type, image.body)
+            )
         if not files:
             raise TelegramAPIError("No downloadable images")
         if len(files) == 1:
@@ -209,7 +222,11 @@ class SoloistBot:
         self.taobao_login_task: asyncio.Task[None] | None = None
 
     async def run(self) -> None:
-        api = TelegramAPI(self.settings.telegram_bot_token)
+        api = TelegramAPI(
+            self.settings.telegram_bot_token,
+            watermark_text=self.settings.watermark_text,
+            watermark_opacity=self.settings.watermark_opacity,
+        )
         scheduler = asyncio.create_task(self._scheduler(api))
         try:
             await self._poll(api)
