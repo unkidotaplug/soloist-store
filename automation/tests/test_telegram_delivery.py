@@ -13,22 +13,17 @@ class RecordingTelegramAPI(TelegramAPI):
         self.calls.append((method, payload or {}))
         return {"message_id": 1}
 
-    async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]):
-        self.calls.append(
-            ("uploadWatermarkedMedia", {"chat_id": chat_id, "caption": draft.post_html, "media": media})
-        )
-        return {"photo": [{"file_id": "watermarked-file-id"}]}
-
 
 class RefreshingTelegramAPI(RecordingTelegramAPI):
     def __init__(self) -> None:
         super().__init__()
         self.refreshed = False
 
-    async def _upload_media(self, chat_id: int, draft: Draft, media: list[str]):
+    async def call(self, method: str, payload: dict | None = None):
+        body = payload or {}
+        self.calls.append((method, body))
         if not self.refreshed:
             raise TelegramAPIError("failed to get HTTP URL content")
-        self.calls.append(("uploadWatermarkedMedia", {"media": media}))
         return [
             {"photo": [{"file_id": "small"}, {"file_id": "permanent-file-id"}]}
         ]
@@ -66,7 +61,7 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         await api.send_draft(123, draft)
 
-        self.assertEqual([method for method, _ in api.calls], ["uploadWatermarkedMedia"])
+        self.assertEqual([method for method, _ in api.calls], ["sendPhoto"])
         self.assertNotIn("Черновик", str(api.calls))
         self.assertNotIn("#42", str(api.calls))
 
@@ -86,7 +81,7 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
         file_ids = await api.send_draft(123, draft)
 
         self.assertEqual(file_ids, ["permanent-file-id"])
-        self.assertEqual(api.calls[-1][0], "uploadWatermarkedMedia")
+        self.assertEqual(api.calls[-1][0], "sendMediaGroup")
         self.assertNotIn("Фото:", str(api.calls))
 
     async def test_total_media_failure_never_sends_raw_urls_as_text(self) -> None:
