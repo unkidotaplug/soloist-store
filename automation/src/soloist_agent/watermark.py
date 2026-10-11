@@ -17,10 +17,11 @@ class WatermarkedImage:
 
 
 FONT_CANDIDATES = (
-    "/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-BoldOblique.ttf",
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf",
-    "/System/Library/Fonts/Supplemental/Arial Bold Italic.ttf",
-    "/Library/Fonts/Arial Bold Italic.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSerif-BoldItalic.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSerif-BoldItalic.ttf",
+    "/System/Library/Fonts/Supplemental/Georgia Bold Italic.ttf",
+    "/System/Library/Fonts/Supplemental/Times New Roman Bold Italic.ttf",
+    "/Library/Fonts/Georgia Bold Italic.ttf",
 )
 
 
@@ -31,7 +32,7 @@ def _font(size: int):
         if Path(candidate).exists():
             return ImageFont.truetype(candidate, size=size)
     try:
-        return ImageFont.truetype("DejaVuSansCondensed-BoldOblique.ttf", size=size)
+        return ImageFont.truetype("DejaVuSerif-BoldItalic.ttf", size=size)
     except OSError:
         return ImageFont.load_default(size=size)
 
@@ -72,7 +73,7 @@ def apply_center_watermark(
     payload: bytes,
     *,
     text: str = "SOLOIST",
-    opacity: int = 165,
+    opacity: int = 120,
 ) -> WatermarkedImage:
     """Place a centered editorial-style watermark on an image."""
     try:
@@ -97,24 +98,24 @@ def apply_center_watermark(
     overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
-    font_size = max(28, min(round(width * 0.17), round(height * 0.22)))
+    font_size = max(22, min(round(width * 0.105), round(height * 0.16)))
     font = _font(font_size)
-    spacing = max(1, round(font_size * 0.025))
-    stroke_width = max(2, round(font_size * 0.04))
+    spacing = max(2, round(font_size * 0.08))
+    stroke_width = max(1, round(font_size * 0.025))
     text_width = _spaced_width(draw, label, font, spacing, stroke_width)
-    target_width = round(width * 0.78)
+    target_width = round(width * 0.58)
     if text_width > target_width:
         font_size = max(18, round(font_size * target_width / text_width))
         font = _font(font_size)
-        spacing = max(1, round(font_size * 0.025))
-        stroke_width = max(2, round(font_size * 0.04))
+        spacing = max(1, round(font_size * 0.08))
+        stroke_width = max(1, round(font_size * 0.025))
         text_width = _spaced_width(draw, label, font, spacing, stroke_width)
 
     bbox = draw.textbbox((0, 0), label, font=font, stroke_width=stroke_width)
     text_height = bbox[3] - bbox[1]
     x = round((width - text_width) / 2)
     y = round((height - text_height) / 2 - bbox[1])
-    shadow = max(2, round(font_size * 0.045))
+    shadow = max(1, round(font_size * 0.035))
 
     _draw_spaced_text(
         draw,
@@ -122,9 +123,9 @@ def apply_center_watermark(
         label,
         font=font,
         spacing=spacing,
-        fill=(0, 0, 0, max(45, round(alpha * 0.72))),
+        fill=(0, 0, 0, max(30, round(alpha * 0.65))),
         stroke_width=stroke_width,
-        stroke_fill=(0, 0, 0, max(50, round(alpha * 0.78))),
+        stroke_fill=(0, 0, 0, max(35, round(alpha * 0.7))),
     )
     _draw_spaced_text(
         draw,
@@ -134,7 +135,7 @@ def apply_center_watermark(
         spacing=spacing,
         fill=(255, 255, 255, alpha),
         stroke_width=stroke_width,
-        stroke_fill=(10, 10, 10, max(55, round(alpha * 0.78))),
+        stroke_fill=(15, 15, 15, max(35, round(alpha * 0.65))),
     )
 
     result = Image.alpha_composite(base, overlay)

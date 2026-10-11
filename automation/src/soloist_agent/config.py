@@ -89,7 +89,7 @@ class Settings:
     source_page_limit: int = 30
     request_timeout_seconds: int = 30
     watermark_text: str = "SOLOIST"
-    watermark_opacity: int = 165
+    watermark_opacity: int = 120
 
     yuan_rate: Decimal = Decimal("13")
     procurement_multiplier: Decimal = Decimal("1.15")
@@ -200,7 +200,7 @@ class Settings:
             source_page_limit=_int("SOURCE_PAGE_LIMIT", 30),
             request_timeout_seconds=_int("REQUEST_TIMEOUT_SECONDS", 30),
             watermark_text=os.getenv("WATERMARK_TEXT", "SOLOIST").strip() or "SOLOIST",
-            watermark_opacity=_int("WATERMARK_OPACITY", 165),
+            watermark_opacity=_int("WATERMARK_OPACITY", 120),
             yuan_rate=_decimal("YUAN_RATE", "13"),
             procurement_multiplier=_decimal("PROCUREMENT_MULTIPLIER", "1.15"),
             competitor_cheaper_rub=_int("COMPETITOR_CHEAPER_RUB", 500),
