@@ -195,6 +195,10 @@ class ProductNormalizer:
         candidate: ProductCandidate,
     ) -> NormalizedProduct:
         fallback = self.heuristic(candidate)
+        # Telegram shop posts are already curated by their source. In full-feed
+        # mode they must not be dropped by the optional thematic AI gate.
+        if candidate.source == "telegram":
+            return fallback
         if not self.settings.ai_enabled:
             return fallback
         try:

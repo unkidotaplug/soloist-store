@@ -85,8 +85,8 @@ class Settings:
         default_factory=lambda: ["destiny_place"]
     )
     scan_interval_minutes: int = 1
-    max_new_drafts_per_scan: int = 6
-    source_page_limit: int = 30
+    max_new_drafts_per_scan: int = 50
+    source_page_limit: int = 100
     request_timeout_seconds: int = 30
 
     yuan_rate: Decimal = Decimal("13")
@@ -194,8 +194,8 @@ class Settings:
             telegram_source_channel=source_channels[0],
             telegram_source_channels=source_channels,
             scan_interval_minutes=_int("SCAN_INTERVAL_MINUTES", 1),
-            max_new_drafts_per_scan=_int("MAX_NEW_DRAFTS_PER_SCAN", 6),
-            source_page_limit=_int("SOURCE_PAGE_LIMIT", 30),
+            max_new_drafts_per_scan=_int("MAX_NEW_DRAFTS_PER_SCAN", 50),
+            source_page_limit=_int("SOURCE_PAGE_LIMIT", 100),
             request_timeout_seconds=_int("REQUEST_TIMEOUT_SECONDS", 30),
             yuan_rate=_decimal("YUAN_RATE", "13"),
             procurement_multiplier=_decimal("PROCUREMENT_MULTIPLIER", "1.15"),
