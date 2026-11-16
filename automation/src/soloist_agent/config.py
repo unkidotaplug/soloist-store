@@ -40,6 +40,18 @@ def _csv(name: str) -> list[str]:
     return [item.strip() for item in os.getenv(name, "").split(",") if item.strip()]
 
 
+def _int_csv(name: str) -> list[int]:
+    values: list[int] = []
+    for raw in _csv(name):
+        try:
+            value = int(raw)
+        except ValueError:
+            continue
+        if value and value not in values:
+            values.append(value)
+    return values
+
+
 DEFAULT_KEYWORDS = [
     "Rick Owens",
     "Balenciaga",
@@ -80,6 +92,7 @@ class Settings:
     database_path: Path
     telegram_bot_token: str = ""
     telegram_admin_id: int = 0
+    telegram_recipient_ids: list[int] = field(default_factory=list)
     telegram_source_channel: str = "destiny_place"
     telegram_source_channels: list[str] = field(
         default_factory=lambda: ["destiny_place"]
@@ -185,12 +198,18 @@ class Settings:
             )
         )
 
+        admin_id = _int("TELEGRAM_ADMIN_ID", 0)
+        recipient_ids = _int_csv("TELEGRAM_RECIPIENT_IDS")
+        if admin_id and admin_id not in recipient_ids:
+            recipient_ids.insert(0, admin_id)
+
         return cls(
             project_dir=project_dir,
             data_dir=data_dir,
             database_path=data_dir / "soloist_agent.sqlite3",
             telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN", "").strip(),
-            telegram_admin_id=_int("TELEGRAM_ADMIN_ID", 0),
+            telegram_admin_id=admin_id,
+            telegram_recipient_ids=recipient_ids,
             telegram_source_channel=source_channels[0],
             telegram_source_channels=source_channels,
             scan_interval_minutes=_int("SCAN_INTERVAL_MINUTES", 1),

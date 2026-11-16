@@ -339,17 +339,22 @@ class SoloistBot:
         return result
 
     async def _deliver(self, api: TelegramAPI, drafts: list[Draft]) -> None:
-        if not self.settings.telegram_admin_id:
+        recipient_ids = self.settings.telegram_recipient_ids or [self.settings.telegram_admin_id]
+        recipient_ids = [chat_id for chat_id in recipient_ids if chat_id]
+        if not recipient_ids:
             return
         for draft in drafts:
+            delivered = True
             try:
-                reusable_media = await api.send_draft(self.settings.telegram_admin_id, draft)
-                if reusable_media:
-                    self.database.update_media(draft.id, reusable_media)
-                self.database.mark_delivered(draft.id)
+                for chat_id in recipient_ids:
+                    reusable_media = await api.send_draft(chat_id, draft)
+                    if reusable_media:
+                        self.database.update_media(draft.id, reusable_media)
             except (HttpError, TelegramAPIError) as exc:
                 print(f"delivery failed for draft {draft.id}: {exc}", file=sys.stderr, flush=True)
-                break
+                delivered = False
+            if delivered:
+                self.database.mark_delivered(draft.id)
 
     async def _scan_taobao_and_deliver(self, api: TelegramAPI) -> None:
         if self.scan_lock.locked():
